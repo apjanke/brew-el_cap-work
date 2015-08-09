@@ -6,5 +6,11 @@ The code in here isn't going to be widely useful or reusable.
 
 ###   What's in here   ###
 
-Most of this is scripts for doing installs from source of all the formulae in Homebrew core. It has some logic for tracking progress, following dependencies, and avoiding redundant installs of formulae whose dependencies fail.
+Most of this is scripts for doing installs from source of all the formulae in Homebrew core. It has some logic for:
 
+* tracking progress
+* following dependencies
+* avoiding redundant installs of formulae whose dependencies fail.
+* automatically removing conflicting formulae
+
+A bunch of files get dumped under log/ during the progress of the runs. Those don't need to be tracked in git.
