@@ -12,4 +12,5 @@ function init_script() {
 	mkdir -p $vardir
 	mkdir -p $my_logdir
 	mkdir -p $my_logdir/install
+  SHORT_HOST=$(scutil --get ComputerName 2>/dev/null) || SHORT_HOST=${HOST/.*/}
 }

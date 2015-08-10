@@ -1,0 +1,53 @@
+#!/bin/zsh
+
+# Creates a tarball containing logs for runs we've done.
+# Tarball will include the build script logs, and Homebrew's own logs
+# for the formulae which failed.
+
+source bin/common-script-stuff.zsh
+init_script
+
+set -e
+
+failed_and_rebuilt=($(cat var/rebuilt-debug-xfail | sort | uniq))
+
+leafname="${USER}-${SHORT_HOST}-${timestamp}"
+mkdir -p tmp/$leafname
+cd tmp/$leafname
+
+mkdir harness-logs
+mkdir -p Logs/Homebrew
+
+if [[ -e ../../log/runs ]]; then
+	print "Copying harness logs"
+	cp -a ../../log/runs harness-logs
+else
+	print "No harness logs to copy"
+fi
+
+for formula in $failed_and_rebuilt; do
+	formula_log_dir=$HOME/Library/Logs/Homebrew/$formula
+	if [[ -e $formula_log_dir ]]; then
+		print "Copying logs for formula: $formula"
+		cp -a $formula_log_dir Logs/Homebrew
+	else
+		print "No Homebrew logs for formula: $formula"
+	fi
+done
+
+cd ..
+
+print "Creating tarball"
+tar czf ${leafname}.tgz $leafname
+mv ${leafname}.tgz ../var/log-archive
+
+print "Cleaning up"
+rm -rf $leafname
+cd ..
+
+print ""
+print "Done: var/log-archive/${leafname}.tgz"
+( cd var/log-archive && ls -l ${leafname}.tgz )
+print "Don't forget to add it to the repo if you want to share it"
+
+

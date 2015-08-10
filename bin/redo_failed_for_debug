@@ -64,7 +64,7 @@ function do_it() {
   print "Done"
 }
 
-already_failed=($(cat log/failed | sort | uniq))
+already_failed=($(cat var/failed | sort | uniq))
 touch $built_file
 built_debug=($(cat $built_file | sort | uniq))
 built_debug_ok=($(cat $ok_rebuild_file | sort | uniq))
