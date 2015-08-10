@@ -14,3 +14,11 @@ Most of this is scripts for doing installs from source of all the formulae in Ho
 * automatically removing conflicting formulae
 
 A bunch of files get dumped under log/ during the progress of the runs. Those don't need to be tracked in git.
+
+
+###   Usage  ###
+
+All the programs in bin/ need to be run from the base directory of the project. They are not location-aware, assume all paths are relative to pwd, and use that to locate log/, var/, and so on.
+
+The files in bin/ without an extension are scripts intended to be run as commands in their own process. The files with a `.zsh` extension are function definitions intended to be sourced so their functions can be used interactively.
+

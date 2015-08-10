@@ -6,13 +6,8 @@
 
 print "Rebuilding failed formulae in debug mode"
 
-timestamp=$(date "+%Y%m%d_%H%M%S")
-baselogdir=log
-built_file=$baselogdir/rebuilt-debug-xfail
-ok_rebuild_file=$baselogdir/rebuilt-debug-ok
-logdir=$baselogdir/runs/run-$timestamp
-mkdir -p $logdir
-mkdir -p $logdir/install
+source bin/common-script-stuff.zsh
+init_script
 
 function list_conflicts() {
   local formula=$1
@@ -45,7 +40,7 @@ function do_one() {
   done
 
   print "building: $formula  ($(date +%H:%M:%S))"
-  HOMEBREW_MAKE_JOBS=1 brew install --build-from-source -v $formula &> $logdir/install/$formula
+  HOMEBREW_MAKE_JOBS=1 brew install --build-from-source -v $formula &> $my_logdir/install/$formula
   if [[ $? == 0 ]]; then
     print "OK: $formula"
     print "$formula" >> $ok_rebuild_file
@@ -80,7 +75,7 @@ else
   formulae_to_rebuild=($*)
 fi
 
-do_it | tee $logdir/run.log
+do_it | tee $my_logdir/run.log
 
 
 

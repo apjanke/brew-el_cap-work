@@ -1,7 +1,13 @@
 #!/bin/zsh
 
 # Script to try installing everything from the homebrew core
-# TODO: auto-uninstall conflicting formulae
+
+source bin/common-script-stuff.zsh
+init_script
+
+function HMS() {
+  date +%H:%M:%S
+}
 
 rubies=($(ls $(brew --prefix)/Library/Formula))
 if [[ $# == 0 ]]; then
@@ -13,12 +19,7 @@ else
 	all_formulas=($*)
 fi
 
-timestamp=$(date "+%Y%m%d_%H%M%S")
-baselogdir=log
-logdir=$baselogdir/runs/run-$timestamp
-mkdir -p $logdir
-mkdir -p $logdir/install
-already_failed=($(cat log/failed | sort | uniq))
+already_failed=($(cat $vardir/failed | sort | uniq))
 failed=()
 
 function do_one() {
@@ -52,16 +53,16 @@ function do_one() {
     fi
   done
 
-  print "$(date +%H:%M:%S) trying: $formula"
-  brew install --build-from-source $formula &> $logdir/install/$formula
+  print "$(HMS) trying: $formula"
+  brew install --build-from-source $formula &> $my_logdir/install/$formula
   if [[ $? == 0 ]]; then
     print "ok: $formula"
     return 0
   else
-    print "FAILED: $formula  ($(date +%H:%M:%S))"
-    print "$formula" >> $logdir/failed
+    print "FAILED: $formula  ($(HMS))"
+    print "$formula" >> $my_logdir/failed
     # Keep a combined list from all runs, for ease of review
-    print "$formula" >> $baselogdir/failed
+    print "$formula" >> $vardir/failed
     failed+=$formula
     return 1
   fi
@@ -84,5 +85,5 @@ print "Formulas: ${#all_formulas} attempted, ${#failed} failed"
 
 }
 
-do_it | tee $logdir/run.log
+do_it | tee $my_logdir/run.log
 
